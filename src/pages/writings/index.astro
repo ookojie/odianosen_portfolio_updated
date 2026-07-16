@@ -1,0 +1,95 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+import TagFilter from '../../components/TagFilter.astro';
+import { SITE_TITLE } from '../../consts';
+
+const writings = (await getCollection('writings')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const allTags = [...new Set(writings.flatMap((writing) => writing.data.tags))].sort();
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={`Writings — ${SITE_TITLE}`}
+			description="Technical write-ups, learning-in-public posts, and the French B2 journey."
+		/>
+		<style>
+			.list {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+			.entry {
+				display: flex;
+				gap: 1.5em;
+				padding: 1.5em 0;
+				border-bottom: 1px solid rgb(var(--gray-light));
+			}
+			.entry a {
+				display: block;
+				text-decoration: none;
+				color: inherit;
+			}
+			.entry img {
+				width: 160px;
+				height: 100px;
+				object-fit: cover;
+				border-radius: 8px;
+				flex-shrink: 0;
+			}
+			.summary {
+				color: rgb(var(--gray-dark));
+			}
+			.tags {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.4em;
+				margin-top: 0.5em;
+			}
+			.tag {
+				background: rgb(var(--gray-light));
+				border-radius: 999px;
+				padding: 0.15em 0.7em;
+				font-size: 0.75em;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>Writings</h1>
+			<TagFilter tags={allTags} />
+			<ul class="list">
+				{
+					writings.map((writing) => (
+						<li class="entry" data-tags={writing.data.tags.join(',')}>
+							{writing.data.coverImage && (
+								<Image src={writing.data.coverImage} width={160} height={100} alt="" />
+							)}
+							<a href={`/writings/${writing.id}/`}>
+								<h4>{writing.data.title}</h4>
+								<FormattedDate date={writing.data.pubDate} />
+								<p class="summary">{writing.data.summary}</p>
+								<div class="tags">
+									{writing.data.tags.map((tag) => (
+										<span class="tag">{tag}</span>
+									))}
+								</div>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>

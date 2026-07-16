@@ -1,0 +1,74 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import Header from '../components/Header.astro';
+
+type Props = CollectionEntry<'talks'>['data'];
+
+const { eventName, date, location, topic, audienceSize, photos, recordingUrl } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<BaseHead
+			title={`${topic} — ${eventName}`}
+			description={`${eventName} talk on ${topic}`}
+			image={photos?.[0]}
+		/>
+		<style>
+			.meta {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.4em 1.2em;
+				margin: 1em 0 1.5em 0;
+				color: rgb(var(--gray));
+			}
+			.recording-link {
+				display: inline-block;
+				margin-bottom: 1.5em;
+			}
+			.photos {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+				gap: 1em;
+				margin: 2em 0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<Header />
+		<main>
+			<article class="prose">
+				<p class="event-name">{eventName}</p>
+				<h1>{topic}</h1>
+				<div class="meta">
+					<FormattedDate date={date} />
+					<span>{location}</span>
+					<span>{audienceSize} attendees</span>
+				</div>
+				{
+					recordingUrl && (
+						<a class="recording-link" href={recordingUrl} target="_blank" rel="noopener noreferrer">
+							Watch the recording →
+						</a>
+					)
+				}
+				<slot />
+				{
+					photos && photos.length > 0 && (
+						<div class="photos">
+							{photos.map((src) => (
+								<Image src={src} width={480} height={320} alt="" />
+							))}
+						</div>
+					)
+				}
+			</article>
+		</main>
+		<Footer />
+	</body>
+</html>

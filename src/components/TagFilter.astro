@@ -1,0 +1,63 @@
+---
+// A small tag-filter bar. Pair it with a listing where every filterable
+// item carries a `data-tags="tag-one,tag-two"` attribute — clicking a tag
+// here shows/hides those items with no page reload.
+interface Props {
+	tags: string[];
+}
+
+const { tags } = Astro.props;
+---
+
+<div class="tag-filter" role="group" aria-label="Filter by tag">
+	<button type="button" class="tag-button active" data-tag="all">All</button>
+	{
+		tags.map((tag) => (
+			<button type="button" class="tag-button" data-tag={tag}>
+				{tag}
+			</button>
+		))
+	}
+</div>
+
+<style>
+	.tag-filter {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5em;
+		margin-bottom: 2em;
+	}
+	.tag-button {
+		border: 1px solid rgb(var(--gray-light));
+		background: white;
+		color: rgb(var(--gray-dark));
+		padding: 0.35em 0.9em;
+		border-radius: 999px;
+		cursor: pointer;
+		font-size: 0.85em;
+	}
+	.tag-button.active {
+		background: var(--accent);
+		color: white;
+		border-color: var(--accent);
+	}
+</style>
+
+<script>
+	const buttons = document.querySelectorAll<HTMLButtonElement>('.tag-button');
+	const items = document.querySelectorAll<HTMLElement>('[data-tags]');
+
+	for (const button of buttons) {
+		button.addEventListener('click', () => {
+			for (const b of buttons) b.classList.remove('active');
+			button.classList.add('active');
+
+			const selected = button.dataset.tag;
+			for (const item of items) {
+				const itemTags = (item.dataset.tags ?? '').split(',');
+				const show = selected === 'all' || itemTags.includes(selected ?? '');
+				item.style.display = show ? '' : 'none';
+			}
+		});
+	}
+</script>

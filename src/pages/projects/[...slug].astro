@@ -1,0 +1,25 @@
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import ProjectLayout from '../../layouts/ProjectLayout.astro';
+
+// getStaticPaths runs at build time. It reads every entry out of the
+// 'projects' collection and tells Astro "make one page per entry, at
+// /projects/<the-filename-without-.md>/". Add a new .md file to
+// src/content/projects/ and a new page appears here automatically —
+// no route to write by hand.
+export async function getStaticPaths() {
+	const projects = await getCollection('projects');
+	return projects.map((project) => ({
+		params: { slug: project.id },
+		props: project,
+	}));
+}
+type Props = CollectionEntry<'projects'>;
+
+const project = Astro.props;
+const { Content } = await render(project);
+---
+
+<ProjectLayout {...project.data}>
+	<Content />
+</ProjectLayout>

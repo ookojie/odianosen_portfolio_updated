@@ -1,0 +1,111 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+import TagFilter from '../../components/TagFilter.astro';
+import { SITE_TITLE } from '../../consts';
+
+const projects = (await getCollection('projects')).sort(
+	(a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+// Build the de-duplicated list of tags across every project, for the filter bar.
+const allTags = [...new Set(projects.flatMap((project) => project.data.tags))].sort();
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Projects — ${SITE_TITLE}`} description="Hardware and software projects." />
+		<style>
+			.grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+				gap: 2em;
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+			.card a {
+				display: block;
+				text-decoration: none;
+				color: inherit;
+			}
+			.card img {
+				border-radius: 12px;
+				margin-bottom: 0.5em;
+			}
+			.card-header {
+				display: flex;
+				align-items: baseline;
+				justify-content: space-between;
+				gap: 0.5em;
+			}
+			.status {
+				flex-shrink: 0;
+				display: inline-block;
+				padding: 0.15em 0.6em;
+				border-radius: 999px;
+				font-size: 0.75em;
+				font-weight: bold;
+				text-transform: capitalize;
+			}
+			.status.ongoing {
+				background: #fff3cd;
+				color: #7a5b00;
+			}
+			.status.completed {
+				background: #d4edda;
+				color: #1e5b2c;
+			}
+			.description {
+				color: rgb(var(--gray-dark));
+			}
+			.tags {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.4em;
+				margin-top: 0.5em;
+			}
+			.tag {
+				background: rgb(var(--gray-light));
+				border-radius: 999px;
+				padding: 0.15em 0.7em;
+				font-size: 0.75em;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>Projects</h1>
+			<TagFilter tags={allTags} />
+			<ul class="grid">
+				{
+					projects.map((project) => (
+						<li class="card" data-tags={project.data.tags.join(',')}>
+							<a href={`/projects/${project.id}/`}>
+								<Image src={project.data.coverImage} width={560} height={315} alt="" />
+								<div class="card-header">
+									<h4>{project.data.title}</h4>
+									<span class={`status ${project.data.status}`}>{project.data.status}</span>
+								</div>
+								<p class="description">{project.data.description}</p>
+								<FormattedDate date={project.data.date} />
+								<div class="tags">
+									{project.data.tags.map((tag) => (
+										<span class="tag">{tag}</span>
+									))}
+								</div>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>

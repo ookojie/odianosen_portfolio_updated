@@ -12,6 +12,10 @@ const { date } = Astro.props;
 			year: 'numeric',
 			month: 'short',
 			day: 'numeric',
+			// Frontmatter dates like "2024-03-01" are parsed as UTC midnight.
+			// Formatting in UTC too keeps the displayed date matching what was
+			// typed, regardless of the visitor's local timezone.
+			timeZone: 'UTC',
 		})
 	}
 </time>

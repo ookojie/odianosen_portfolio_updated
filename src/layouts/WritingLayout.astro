@@ -1,0 +1,67 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import Header from '../components/Header.astro';
+
+type Props = CollectionEntry<'writings'>['data'];
+
+const { title, pubDate, tags, summary, coverImage } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={summary} image={coverImage} />
+		<style>
+			.cover-image img {
+				display: block;
+				margin: 0 auto;
+				border-radius: 12px;
+				box-shadow: var(--box-shadow);
+			}
+			.date {
+				margin-bottom: 0.5em;
+				color: rgb(var(--gray));
+			}
+			.tags {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5em;
+				margin: 1em 0 2em 0;
+			}
+			.tag {
+				background: rgb(var(--gray-light));
+				border-radius: 999px;
+				padding: 0.2em 0.8em;
+				font-size: 0.8em;
+			}
+		</style>
+	</head>
+
+	<body>
+		<Header />
+		<main>
+			<article class="prose">
+				{
+					coverImage && (
+						<div class="cover-image">
+							<Image src={coverImage} width={1020} height={573} alt="" />
+						</div>
+					)
+				}
+				<div class="date">
+					<FormattedDate date={pubDate} />
+				</div>
+				<h1>{title}</h1>
+				<div class="tags">
+					{tags.map((tag) => <span class="tag">{tag}</span>)}
+				</div>
+				<hr />
+				<slot />
+			</article>
+		</main>
+		<Footer />
+	</body>
+</html>

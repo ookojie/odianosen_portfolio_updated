@@ -1,0 +1,70 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+import { SITE_TITLE } from '../../consts';
+
+const talks = (await getCollection('talks')).sort(
+	(a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Talks — ${SITE_TITLE}`} description="Seminars and events, including Netca talks." />
+		<style>
+			.list {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+			.entry {
+				padding: 1.5em 0;
+				border-bottom: 1px solid rgb(var(--gray-light));
+			}
+			.entry a {
+				text-decoration: none;
+				color: inherit;
+			}
+			.event-name {
+				color: rgb(var(--accent));
+				font-weight: bold;
+				margin: 0 0 0.2em 0;
+			}
+			.meta {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.3em 1em;
+				color: rgb(var(--gray));
+				margin-top: 0.3em;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>Talks &amp; Events</h1>
+			<ul class="list">
+				{
+					talks.map((talk) => (
+						<li class="entry">
+							<a href={`/talks/${talk.id}/`}>
+								<p class="event-name">{talk.data.eventName}</p>
+								<h4>{talk.data.topic}</h4>
+								<div class="meta">
+									<FormattedDate date={talk.data.date} />
+									<span>{talk.data.location}</span>
+									<span>{talk.data.audienceSize} attendees</span>
+								</div>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>
