@@ -2,6 +2,8 @@
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import ProjectLayout from '../../layouts/ProjectLayout.astro';
 
+export const prerender = true;
+
 // getStaticPaths runs at build time. It reads every entry out of the
 // 'projects' collection and tells Astro "make one page per entry, at
 // /projects/<the-filename-without-.md>/". Add a new .md file to

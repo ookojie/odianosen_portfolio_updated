@@ -2,6 +2,8 @@
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import WritingLayout from '../../layouts/WritingLayout.astro';
 
+export const prerender = true;
+
 export async function getStaticPaths() {
 	const writings = await getCollection('writings');
 	return writings.map((writing) => ({
