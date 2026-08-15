@@ -13,7 +13,7 @@ export const AUTHOR_NAME = 'Odianosen Okojie';
 
 // TODO: replace with your real profile URLs and contact email.
 export const SOCIAL_LINKS = {
-	github: 'https://github.com/YOUR-GITHUB-USERNAME',
-	linkedin: 'https://linkedin.com/in/YOUR-LINKEDIN-USERNAME',
-	email: 'your.email@example.com',
+	github: 'https://github.com/ookojie',
+	linkedin: 'https://www.linkedin.com/in/odianosen-okojie/',
+	email: 'okojie.odianosen@outlook.com',
 };
